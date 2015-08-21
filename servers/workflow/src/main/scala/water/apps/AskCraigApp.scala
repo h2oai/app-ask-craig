@@ -21,7 +21,6 @@ import org.apache.spark.examples.h2o.CraigslistJobTitlesApp
 import org.apache.spark.h2o.H2OContext
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.thrift.protocol.TJSONProtocol
 import org.apache.thrift.server.TServer.Args
 import org.apache.thrift.server.TSimpleServer
 import org.apache.thrift.transport.TServerSocket
@@ -51,9 +50,7 @@ object AskCraigApp {
       // Setup web server
       val processor = new AskCraig.Processor(handler)
       val serverTransport = new TServerSocket(9090)
-      val args: Args = new Args(serverTransport)
-                            .processor(processor)
-                            .protocolFactory(new TJSONProtocol.Factory())
+      val args: Args = new Args(serverTransport).processor(processor)
       val server = new TSimpleServer(args)
       //
       println(s"\nApplication API is available on ${serverTransport.getServerSocket.getLocalSocketAddress} ...")
