@@ -13,7 +13,6 @@ apply plugin: 'eclipse'
 // Support local launch of application
 apply plugin: 'application'
 mainClassName = 'water.apps.AskCraigApp'
-applicationDefaultJvmArgs = ["-Xmx6g", "-Xms6g"]
 
 //
 // The build script settings to fetch plugins and put them on
