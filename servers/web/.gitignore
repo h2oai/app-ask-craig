@@ -38,5 +38,5 @@ gen-nodejs
 # Compiled files
 index.html
 style.css
-server.js
+app.js
 

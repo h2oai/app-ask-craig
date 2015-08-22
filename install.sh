@@ -6,8 +6,6 @@ pushd servers/workflow
   ./gradlew build
 popd
 
-thrift -gen js:node -o servers/web/ servers/workflow/src/main/thrift/askcraig.thrift
-
 pushd servers/web
   npm install
   npm run build
