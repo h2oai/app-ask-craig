@@ -35,10 +35,6 @@ class AskCraigHandler(val app : CraigslistJobTitlesApp) extends Iface {
                    }):_*))
   }
 
-  override def getThrift: util.List[String] = {
-    util.Arrays.asList(thriftFile("shared.thrift"), thriftFile("askcraig.thrift"))
-  }
-
   override def buildModel(file: String): Unit = {
     val (gbmModel, w2vModel) = app.buildModels(file, "gbm.model");
     this.gbmModel = gbmModel._key.toString

@@ -7,7 +7,6 @@ pushd servers/workflow
 popd
 
 thrift -gen js:node -o servers/web/ servers/workflow/src/main/thrift/askcraig.thrift
-thrift -gen js:node -o servers/web/ servers/workflow/src/main/thrift/shared.thrift
 
 pushd servers/web
   npm install
