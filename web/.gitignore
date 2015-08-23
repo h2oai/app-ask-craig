@@ -37,6 +37,7 @@ gen-nodejs
 
 # Compiled files
 index.html
-style.css
+fluid.css
+fluid.js
 app.js
 

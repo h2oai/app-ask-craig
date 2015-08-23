@@ -9,6 +9,7 @@ popd
 pushd web
   npm install
   npm run build
+  fluidc app.coffee --script=lib/thrift/lib/js/src/thrift.js --script=gen-js/Web.js --script=gen-js/web_types.js
 popd
 
 
