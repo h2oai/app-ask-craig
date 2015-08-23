@@ -2,19 +2,19 @@
 set -e
 set -x
 
-pushd servers/workflow
+pushd workflow
   ./gradlew build
 popd
 
-pushd servers/web
+pushd web
   npm install
   npm run build
 popd
 
 
 # TODO pass port
-# cd servers/workflow
+# cd workflow
 # ./gradlew run
 
-# cd servers/web
+# cd web
 # npm start -- --workflow-server=localhost:9090
