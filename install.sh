@@ -6,7 +6,7 @@ pushd workflow
   # Prime database
   mongoimport \
     --db app-ask-craig \
-    --collection jobTitles \
+    --collection jobs \
     --type csv \
     --headerline \
     --file ./data/craigslistJobTitles.csv
