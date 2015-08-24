@@ -3,6 +3,15 @@ set -e
 set -x
 
 pushd workflow
+  # Prime database
+  mongoimport \
+    --db app-ask-craig \
+    --collection jobTitles \
+    --type csv \
+    --headerline \
+    --file ./data/craigslistJobTitles.csv
+
+  # Build sparkling-water application
   ./gradlew build
 popd
 
@@ -25,3 +34,4 @@ popd
 
 # cd web
 # npm start -- --workflow-server=localhost:9090
+
