@@ -7,9 +7,15 @@ pushd workflow
 popd
 
 pushd web
+  # Build web app
   npm install
-  npm run build
-  fluidc app.coffee --script=lib/thrift/lib/js/src/thrift.js --script=gen-js/Web.js --script=gen-js/web_types.js
+
+  # Compile user interface
+  ./node_modules/.bin/fluid \
+    --compile app.coffee \
+    --include-js lib/thrift/lib/js/src/thrift.js \
+    --include-js gen-js/Web.js \
+    --include-js gen-js/web_types.js
 popd
 
 
