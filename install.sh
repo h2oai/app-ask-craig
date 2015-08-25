@@ -17,7 +17,7 @@ popd
 
 pushd web
   # Build web app
-  npm install && npm run fluid
+  npm install && npm run build
 popd
 
 
