@@ -27,19 +27,6 @@ workflow = ->
 
     _workflow = Thrift.createClient workflowServer, workflowServerConnection
 
-# workflow.shutdown (error, response) ->
-#   if error
-#     console.error error
-#   else
-#     console.log response
-
-# workflow.predict 'Marketing manager for sparkling water!', (error, response) ->
-#   if error
-#     console.error error
-#   else
-#     console.log response
-#   workflowServerConnection.end()
-
 
 # ---
 #TODO externalize handler for use by Express server.
