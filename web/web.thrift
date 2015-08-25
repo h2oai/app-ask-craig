@@ -1,7 +1,10 @@
+namespace js App
+
 struct Job {
   1: required string title;
   2: optional string category;
 }
+
 service Web {
   string ping();
   string echo(1: string message);

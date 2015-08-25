@@ -3,8 +3,8 @@ argv = require('minimist') process.argv.slice 2
 Thrift = require 'thrift'
 workflowServer = require './gen-nodejs/AskCraig'
 Workflow = require './gen-nodejs/askcraig_types'
-processor = require './gen-nodejs/Web.js'
-Web = require './gen-nodejs/web_types.js'
+appServer = require './gen-nodejs/Web.js'
+App = require './gen-nodejs/web_types.js'
 mongodb = require 'mongodb'
 
 _.defaults argv,
@@ -59,7 +59,7 @@ listJobs = (skip=0, limit=20, go) ->
         go error
       else
         if job
-          list.push new Web.Job title: job.jobtitle, category: job.category
+          list.push new App.Job title: job.jobtitle, category: job.category
         else
           go null, list
 
@@ -88,7 +88,7 @@ startServer = ->
       '/rpc':
         transport: Thrift.TBufferedTransport
         protocol: Thrift.TJSONProtocol
-        processor: processor
+        processor: appServer
         handler: handler
 
   server.listen port = parseInt argv.port, 10
