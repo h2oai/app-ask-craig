@@ -31,3 +31,6 @@ src-gen/
 
 // pid files
 *.pid
+
+// Log files
+*.log
