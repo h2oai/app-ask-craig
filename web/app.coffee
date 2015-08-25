@@ -1,7 +1,15 @@
-web = new WebClient new Thrift.TJSONProtocol new Thrift.TXHRTransport '/rpc'
+server = new App.WebClient new Thrift.TJSONProtocol new Thrift.TXHRTransport '/rpc'
 
-web.ping (result) -> console.log arguments
-web.echo 'hello!', (result) -> console.log arguments
-web.predict 'Marketing manager for sparkling water!', (result) ->  console.log arguments
+app.title 'Ask Craig'
 
-window.web = web
+server.ping (result) -> console.log arguments
+server.echo 'hello!', (result) -> console.log arguments
+server.predictJobCategory 'Marketing manager for sparkling water!', (result) ->  console.log arguments
+server.listJobs 0, 10, (res) -> console.log res
+
+aJob = new App.Job title: 'judo instructor needed', category: 'education'
+
+server.createJob aJob, (result) -> console.log arguments
+
+
+window.server = server
