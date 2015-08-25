@@ -58,10 +58,8 @@ startServer = (db, workflow, workflowConnection) ->
 
   process.on 'SIGTERM', ->
     console.log 'Shutting down.'
-    if workflowConnection
-      workflowConnection.end()
-    if db
-      db.close() 
+    if workflowConnection then workflowConnection.end()
+    if db then db.close() 
     process.exit 0
 
   process.stdout.write " started on port #{port}.\n"
@@ -70,15 +68,11 @@ main = (argv) ->
   [ workflowServerIP, workflowServerPort ] = argv['workflow-server'].split ':'
   process.stdout.write "Connecting to workflow server #{workflowServerIP}:#{workflowServerPort} ..."
   connectToWorkflow workflowServerIP, workflowServerPort, (error, workflow) ->
-    if error
-      throw error
-    else
-      workflowClient = workflow.client
-      workflowConnection = workflow.connection
-      connectToDatabase (error, databaseConnection) ->
-        if error
-          throw error
-        else
-          startServer databaseConnection, workflowClient, workflowConnection
+    if error then throw error
+    workflowClient = workflow.client
+    workflowConnection = workflow.connection
+    connectToDatabase (error, databaseConnection) ->
+      if error then throw error
+      startServer databaseConnection, workflowClient, workflowConnection
 
 main argv
