@@ -12,14 +12,20 @@ _.defaults argv,
   'port': '9091'
 
 [ workflowServerIP, workflowServerPort ] = argv['workflow-server'].split ':'
-workflowServerConnection = Thrift.createConnection workflowServerIP, workflowServerPort,
-  transport : Thrift.TBufferedTransport()
-  protocol : Thrift.TBinaryProtocol()
 
-workflowServerConnection.on 'error', (error) ->
-  console.error JSON.stringify error
+_workflow = undefined
+workflow = ->
+  if _workflow
+    _workflow
+  else
+    workflowServerConnection = Thrift.createConnection workflowServerIP, workflowServerPort,
+      transport : Thrift.TBufferedTransport()
+      protocol : Thrift.TBinaryProtocol()
 
-workflow = Thrift.createClient workflowServer, workflowServerConnection
+    workflowServerConnection.on 'error', (error) ->
+      console.error JSON.stringify error
+
+    _workflow = Thrift.createClient workflowServer, workflowServerConnection
 
 # workflow.shutdown (error, response) ->
 #   if error
