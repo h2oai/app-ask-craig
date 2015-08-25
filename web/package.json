@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "coffee server.coffee",
-    "thrift": "thrift -gen js:node ../workflow/src/main/thrift/askcraig.thrift && -gen js web.thrift && thrift -gen js:node web.thrift",
+    "fluid": "fluid --compile app.coffee --include-js lib/thrift/lib/js/src/thrift.js --include-js gen-js/Web.js --include-js gen-js/web_types.js",
+    "thrift": "thrift -gen js:node ../workflow/src/main/thrift/askcraig.thrift && thrift -gen js web.thrift && thrift -gen js:node web.thrift",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
