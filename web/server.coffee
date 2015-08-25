@@ -69,14 +69,19 @@ handler = { ping, echo, createJob, listJobs, predictJobCategory }
 
 _db = undefined
 connectToDb = (go) ->
-  mongodb.MongoClient.connect "mongodb://#{argv['database-server']}/app-ask-craig", (error, database) ->
+  databaseHost = "mongodb://#{argv['database-server']}/app-ask-craig"
+  console.log "Connecting to #{databaseHost} ..."
+  mongodb.MongoClient.connect databaseHost, (error, database) ->
     if error
+      console.error 'Failed connecting to database.'
       go error
     else
       _db = database
+      console.log 'Connected to database.'
       go null
 
 startServer = ->
+  console.log 'Starting server...'
   server = Thrift.createWebServer
     files: '.'
     services:
@@ -90,6 +95,7 @@ startServer = ->
   process.on 'SIGTERM', ->
     _workflowServerConnection.end() if _workflowServerConnection
     _db.close() if _db
+    console.log 'AskCraig web server shut down gracefully.'
 
   console.log "AskCraig web server running on port #{port}."
 
