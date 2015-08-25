@@ -83,12 +83,14 @@ startServer = ->
         handler: handler
 
   server.listen port = parseInt argv.port, 10
+  process.on 'SIGTERM', ->
+    _workflowServerConnection.end() if _workflowServerConnection
+    _db.close() if _db
+
   console.log "AskCraig web server running on port #{port}."
 
 connectToDb (error) ->
   if error
     throw error
   else
-
     startServer()
-
