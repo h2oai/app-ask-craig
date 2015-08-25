@@ -12,23 +12,6 @@ _.defaults argv,
   'database-server': 'localhost:27017'
   'port': '9091'
 
-[ workflowServerIP, workflowServerPort ] = argv['workflow-server'].split ':'
-
-_workflow = undefined
-_workflowServerConnection = undefined
-workflow = ->
-  if _workflow
-    _workflow
-  else
-    _workflowServerConnection = Thrift.createConnection workflowServerIP, workflowServerPort,
-      transport : Thrift.TBufferedTransport()
-      protocol : Thrift.TBinaryProtocol()
-
-    _workflowServerConnection.on 'error', (error) ->
-      console.error JSON.stringify error
-
-    _workflow = Thrift.createClient workflowServer, _workflowServerConnection
-
 # ---
 #TODO externalize handler for use by Express server.
 #
@@ -38,7 +21,7 @@ ping = (go) -> go null, 'ACK'
 echo = (message, go) -> go null, message
 
 predictJobCategory = (jobTitle, go) -> 
-  workflow().predict jobTitle, (error, prediction) ->
+  _workflow.predict jobTitle, (error, prediction) ->
     if error
       go error
     else
@@ -67,21 +50,38 @@ handler = { ping, echo, createJob, listJobs, predictJobCategory }
 
 # --- 
 
-_db = undefined
-connectToDb = (go) ->
+_isConnectedToWorkflow = no
+connectToWorkflow = (ip, port, go) ->
+  connection = Thrift.createConnection ip, port,
+    transport : Thrift.TBufferedTransport()
+    protocol : Thrift.TBinaryProtocol()
+
+  connection.on 'error', (error) ->
+    if not _isConnectedToWorkflow and error?.code is 'ECONNREFUSED'
+      process.stdout.write '.'
+      #TODO fail after 10m
+      setTimeout connectToWorkflow, 1000, ip, port, go
+    return
+
+  connection.on 'connect', ->
+    _isConnectedToWorkflow = yes
+    process.stdout.write ' connected.\n'
+    go null, connection
+
+  Thrift.createClient workflowServer, connection
+
+connectToDatabase = (go) ->
   databaseHost = "mongodb://#{argv['database-server']}/app-ask-craig"
-  console.log "Connecting to #{databaseHost} ..."
-  mongodb.MongoClient.connect databaseHost, (error, database) ->
+  process.stdout.write "Connecting to #{databaseHost} ..."
+  mongodb.MongoClient.connect databaseHost, (error, connection) ->
     if error
-      console.error 'Failed connecting to database.'
       go error
     else
-      _db = database
-      console.log 'Connected to database.'
-      go null
+      process.stdout.write ' connected.\n'
+      go null, connection
 
 startServer = ->
-  console.log 'Starting server...'
+  process.stdout.write 'Starting app server ...'
   server = Thrift.createWebServer
     files: '.'
     services:
@@ -92,15 +92,31 @@ startServer = ->
         handler: handler
 
   server.listen port = parseInt argv.port, 10
+
   process.on 'SIGTERM', ->
-    _workflowServerConnection.end() if _workflowServerConnection
-    _db.close() if _db
-    console.log 'AskCraig web server shut down gracefully.'
+    console.log 'Shutting down ...'
+    if _workflow
+      _workflow.end()
+    if _db
+      _db.close() 
 
-  console.log "AskCraig web server running on port #{port}."
+  process.stdout.write " started on port #{port}.\n"
 
-connectToDb (error) ->
-  if error
-    throw error
-  else
-    startServer()
+_db = undefined
+_workflow = undefined
+main = (argv) ->
+  [ workflowServerIP, workflowServerPort ] = argv['workflow-server'].split ':'
+  process.stdout.write "Connecting to workflow server #{workflowServerIP}:#{workflowServerPort} ..."
+  connectToWorkflow workflowServerIP, workflowServerPort, (error, connection) ->
+    if error
+      throw error
+    else
+      _workflow = connection
+      connectToDatabase (error, connection) ->
+        _db = connection
+        if error
+          throw error
+        else
+          startServer()
+
+main argv
