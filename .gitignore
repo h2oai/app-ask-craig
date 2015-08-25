@@ -28,3 +28,6 @@ build/
 
 // Ignore generated sources
 src-gen/
+
+// pid files
+*.pid
