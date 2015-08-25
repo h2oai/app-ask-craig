@@ -21,7 +21,7 @@ pushd web
   if ps -p $PID > /dev/null ; then
     echo $PID > server.pid
   else
-    echo "Could not start web server"
+    echo "Could not start app server"
     exit 1
   fi
 popd
