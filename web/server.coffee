@@ -4,6 +4,7 @@ Thrift = require 'thrift'
 workflowServer = require './gen-nodejs/AskCraig'
 Workflow = require './gen-nodejs/askcraig_types'
 processor = require './gen-nodejs/Web.js'
+Web = require './gen-nodejs/web_types.js'
 mongodb = require 'mongodb'
 
 _.defaults argv,
@@ -14,19 +15,19 @@ _.defaults argv,
 [ workflowServerIP, workflowServerPort ] = argv['workflow-server'].split ':'
 
 _workflow = undefined
+_workflowServerConnection = undefined
 workflow = ->
   if _workflow
     _workflow
   else
-    workflowServerConnection = Thrift.createConnection workflowServerIP, workflowServerPort,
+    _workflowServerConnection = Thrift.createConnection workflowServerIP, workflowServerPort,
       transport : Thrift.TBufferedTransport()
       protocol : Thrift.TBinaryProtocol()
 
-    workflowServerConnection.on 'error', (error) ->
+    _workflowServerConnection.on 'error', (error) ->
       console.error JSON.stringify error
 
-    _workflow = Thrift.createClient workflowServer, workflowServerConnection
-
+    _workflow = Thrift.createClient workflowServer, _workflowServerConnection
 
 # ---
 #TODO externalize handler for use by Express server.
@@ -37,25 +38,38 @@ ping = (go) -> go null, 'ACK'
 echo = (message, go) -> go null, message
 
 predict = (jobTitle, go) -> 
-  workflow.predict jobTitle, (error, prediction) ->
+  workflow().predict jobTitle, (error, prediction) ->
     if error
       go error
     else
       go null, prediction.label
 
-handler = { ping, echo, predict }
+createJob = (job, go) ->
+  #TODO
+
+listJobs = (skip=0, limit=20, go) ->
+  _db.collection('jobs').find {}, { skip, limit }, (error, jobs) ->
+    list = []
+    jobs.each (error, job) ->
+      if error
+        go error
+      else
+        if job
+          list.push new Web.Job category: job.category, title: job.jobtitle
+        else
+          go null, list
+
+handler = { ping, echo, predict, createJob, listJobs }
 
 # --- 
 
-db = undefined
-server = undefined
-
+_db = undefined
 connectToDb = (go) ->
   mongodb.MongoClient.connect "mongodb://#{argv['database-server']}/app-ask-craig", (error, database) ->
     if error
       go error
     else
-      db = database
+      _db = database
       go null
 
 startServer = ->
