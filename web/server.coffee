@@ -37,7 +37,7 @@ ping = (go) -> go null, 'ACK'
 
 echo = (message, go) -> go null, message
 
-predict = (jobTitle, go) -> 
+predictJobCategory = (jobTitle, go) -> 
   workflow().predict jobTitle, (error, prediction) ->
     if error
       go error
@@ -45,7 +45,11 @@ predict = (jobTitle, go) ->
       go null, prediction.label
 
 createJob = (job, go) ->
-  #TODO
+  _db.collection('jobs').insert { jobtitle: job.title, category: job.category }, (error, result) ->
+    if error
+      go error
+    else
+      go null, result
 
 listJobs = (skip=0, limit=20, go) ->
   _db.collection('jobs').find {}, { skip, limit }, (error, jobs) ->
@@ -55,11 +59,11 @@ listJobs = (skip=0, limit=20, go) ->
         go error
       else
         if job
-          list.push new Web.Job category: job.category, title: job.jobtitle
+          list.push new Web.Job title: job.jobtitle, category: job.category
         else
           go null, list
 
-handler = { ping, echo, predict, createJob, listJobs }
+handler = { ping, echo, createJob, listJobs, predictJobCategory }
 
 # --- 
 
