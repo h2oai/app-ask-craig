@@ -1,4 +1,6 @@
 _ = require 'underscore'
+ML = require './gen-nodejs/askcraig_types'
+App = require './gen-nodejs/web_types.js'
 
 module.exports = (db, workflow) ->
 

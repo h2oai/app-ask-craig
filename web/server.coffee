@@ -2,10 +2,8 @@ _ = require 'underscore'
 argv = require('minimist') process.argv.slice 2
 Thrift = require 'thrift'
 workflowServer = require './gen-nodejs/AskCraig'
-Workflow = require './gen-nodejs/askcraig_types'
 appServer = require './gen-nodejs/Web.js'
-App = require './gen-nodejs/web_types.js'
-mongodb = require 'mongodb'
+MongoClient = require('mongodb').MongoClient
 Service = require './service.coffee'
 
 _.defaults argv,
@@ -36,14 +34,14 @@ connectToWorkflow = (ip, port, go) ->
 connectToDatabase = (go) ->
   databaseHost = "mongodb://#{argv['database-server']}/app-ask-craig"
   process.stdout.write "Connecting to #{databaseHost} ..."
-  mongodb.MongoClient.connect databaseHost, (error, connection) ->
+  MongoClient.connect databaseHost, (error, db) ->
     if error
       go error
     else
       process.stdout.write ' connected.\n'
-      go null, connection
+      go null, db
 
-startServer = (db, workflow, workflowConnection) ->
+startServer = (db, workflow) ->
   process.stdout.write 'Starting app server ...'
   server = Thrift.createWebServer
     files: '.'
@@ -52,14 +50,14 @@ startServer = (db, workflow, workflowConnection) ->
         transport: Thrift.TBufferedTransport
         protocol: Thrift.TJSONProtocol
         processor: appServer
-        handler: Service db, workflow
+        handler: Service db, workflow.client
 
   server.listen port = parseInt argv.port, 10
 
   process.on 'SIGTERM', ->
     console.log 'Shutting down.'
-    if workflowConnection then workflowConnection.end()
-    if db then db.close() 
+    workflow.connection.end()
+    db.close() 
     process.exit 0
 
   process.stdout.write " started on port #{port}.\n"
@@ -69,10 +67,8 @@ main = (argv) ->
   process.stdout.write "Connecting to workflow server #{workflowServerIP}:#{workflowServerPort} ..."
   connectToWorkflow workflowServerIP, workflowServerPort, (error, workflow) ->
     if error then throw error
-    workflowClient = workflow.client
-    workflowConnection = workflow.connection
-    connectToDatabase (error, databaseConnection) ->
+    connectToDatabase (error, db) ->
       if error then throw error
-      startServer databaseConnection, workflowClient, workflowConnection
+      startServer db, workflow
 
 main argv
