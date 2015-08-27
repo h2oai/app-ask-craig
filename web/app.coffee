@@ -1,7 +1,7 @@
 #
 # This is the source code for the user interface.
 #
-# The HTML, stylesheet and necessary javascript files are autmatically added
+# The HTML, stylesheet and necessary javascript files are automatically added
 #  by the fluid compiler.
 #
 # You can install the fluid compiler using:
@@ -17,8 +17,11 @@
 #
 
 
-# Create a ref to the app server via the bundled Apache Thrift XHR/JSON RPC client.
-server = new App.WebClient new Thrift.TJSONProtocol new Thrift.TXHRTransport '/rpc'
+# Create a ref to the app server via the bundled Apache Thrift 
+#   XHR/JSON RPC client.
+# Also, export it to the window so that we can run RPC calls
+#   from the in-browser Fluid REPL.
+window.server = server = new App.WebClient new Thrift.TJSONProtocol new Thrift.TXHRTransport '/rpc'
 
 # Set the application title
 app.title 'Ask Craig'
@@ -146,3 +149,4 @@ set activePage, [ jobListingView, buttonContainer, jobView ]
 
 # Show the job listing as our initial view.
 showJobListingView()
+
