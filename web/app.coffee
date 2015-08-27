@@ -2,43 +2,81 @@ server = new App.WebClient new Thrift.TJSONProtocol new Thrift.TXHRTransport '/r
 
 app.title 'Ask Craig'
 
-# server.ping (result) -> console.log arguments
-# server.echo 'hello!', (result) -> console.log arguments
-# server.predictJobCategory 'Marketing manager for sparkling water!', (result) ->  console.log arguments
-# server.listJobs 0, 10, (res) -> console.log res
-# aJob = new App.Job title: 'judo instructor needed', category: 'education'
-# server.createJob aJob, (result) -> console.log arguments
+createJobListing = (jobs) ->
+  block jobs.map (job) ->
+    card job.title,
+      items: [
+        body2 job.title
+        caption "Category: #{job.category}"
+      ]
+      menu: menu [
+        command 'Edit', -> alert 'not implemented'
+      ]
+      style: 
+        width: 'auto'
+        minHeight: 'auto'
 
-add activePage, jobTitleField = textfield title: 'Enter a job posting'
-add activePage, addButton = button 'Add', type: 'raised', color: 'primary'
+refreshJobListings = ->
+  server.listJobs 0, 25, (jobs) ->
+    if jobs then set jobListingView, createJobListing jobs
 
-createJobTable = (jobs) ->
-  header = tr [
-    th 'Category'
-    th 'Title'
-  ]
-  rows = for job in jobs
-    tr [
-      td job.category
-      td job.title
+createJobView = ->
+  jobTitleField = textarea title: 'Job Description'
+  jobCategoryField = textfield 'NA', title: 'Category'
+
+  createJob = ->
+    job = new App.Job
+      title: get jobTitleField
+      category: get jobCategoryField
+    server.createJob job, ->
+      set jobTitleField, '' 
+      showJobListingView()
+
+  self = card
+    title: 'Add a new job posting'
+    items: [
+      jobTitleField
+      jobCategoryField
     ]
-  table [ header ].concat rows
+    buttons: [
+      button 'Post', color: 'accent', createJob
+      button 'Dismiss', showJobListingView
+    ]
+    style: 
+      width: 'auto'
 
-_jobTable = null
-server.listJobs 0, 25, (jobs) ->
-  if jobs 
-    add activePage, _jobTable = createJobTable jobs
+  updateJobCategory = (jobTitle) ->
+    server.predictJobCategory jobTitle, (category) ->
+      set jobCategoryField, category
 
-bind addButton, ->
-  if jobTitle = get jobTitleField
-    server.predictJobCategory jobTitle, (result) -> print result
-    set jobTitleField, ''
+  bind jobTitleField, _.throttle updateJobCategory, 500
 
-    server.listJobs 0, 25, (jobs) ->
-      if jobs
-        remove activePage, _jobTable
-        add activePage, _jobTable = createJobTable jobs
+  self
 
+showJobListingView = ->
+  hide jobView
+  show jobListingView
+  show buttonContainer
+  refreshJobListings()
 
+showJobView = ->
+  hide jobListingView
+  hide buttonContainer
+  show jobView
 
+jobListingView = block()
+jobView = createJobView()
 
+addJobButton = button 'add', type: 'floating', color: 'primary'
+buttonContainer = block addJobButton, 
+  style: 
+    position: 'absolute'
+    right: '10px'
+    bottom: '10px'
+    zIndex: 100
+
+bind addJobButton, showJobView
+
+set activePage, [ jobListingView, buttonContainer, jobView ]
+
+showJobListingView()
