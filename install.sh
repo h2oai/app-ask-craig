@@ -6,6 +6,7 @@ pushd workflow
   # Prime database
   mongoimport \
     --verbose \
+    --host=$DB_SERVER_IP_PORT \
     --db=app-ask-craig \
     --collection=jobs \
     --type=csv \

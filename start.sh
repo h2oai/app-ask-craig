@@ -16,7 +16,7 @@ pushd workflow
 popd
 
 pushd web
-  ./node_modules/.bin/coffee server.coffee --workflow-server=localhost:9090 > out.log 2> error.log &
+  ./node_modules/.bin/coffee server.coffee > out.log 2> error.log &
   PID=$!
   if ps -p $PID > /dev/null ; then
     echo $PID > server.pid
