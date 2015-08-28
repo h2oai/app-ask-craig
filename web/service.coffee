@@ -48,16 +48,8 @@ module.exports = (db, workflow) ->
             console.log "Listed #{list.length}"
             go null, list
 
-  retrain = (go) ->
-    console.log 'Retraining ...'
-    workflow.buildModel 'data/craigslistJobTitles.csv', (error, result) ->
-      if error
-        console.error error
-      else
-        console.log 'Retraining completed.'
-
     # This is long-running, so return immediately.
     go null
 
-  { ping, echo, createJob, listJobs, predictJobCategory, retrain }
+  { ping, echo, createJob, listJobs, predictJobCategory }
 

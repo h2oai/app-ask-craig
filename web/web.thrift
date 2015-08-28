@@ -11,6 +11,5 @@ service Web {
   void createJob(1: Job job);
   list<Job> listJobs(1: i32 skip, 2: i32 limit);
   string predictJobCategory(1: string jobTitle);
-  void retrain();
 }
 

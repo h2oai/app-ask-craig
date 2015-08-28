@@ -13,6 +13,8 @@ _.defaults argv,
 
 _isConnectedToWorkflow = no
 connectToWorkflow = (ip, port, go) ->
+  process.stdout.write "Connecting to workflow server #{ip}:#{port} ..."
+
   connection = Thrift.createConnection ip, port,
     transport : Thrift.TBufferedTransport()
     protocol : Thrift.TBinaryProtocol()
@@ -64,7 +66,6 @@ startServer = (db, workflow) ->
 
 main = (argv) ->
   [ workflowServerIP, workflowServerPort ] = argv['workflow-server'].split ':'
-  process.stdout.write "Connecting to workflow server #{workflowServerIP}:#{workflowServerPort} ..."
   connectToWorkflow workflowServerIP, workflowServerPort, (error, workflow) ->
     if error then throw error
     connectToDatabase (error, db) ->
