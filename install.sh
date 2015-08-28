@@ -5,11 +5,12 @@ set -x
 pushd workflow
   # Prime database
   mongoimport \
-    --db app-ask-craig \
-    --collection jobs \
-    --type csv \
+    --verbose \
+    --db=app-ask-craig \
+    --collection=jobs \
+    --type=csv \
     --headerline \
-    --file ./data/craigslistJobTitles.csv
+    --file=./data/craigslistJobTitles.csv
 
   # Build sparkling-water application
   ./gradlew build
