@@ -4,7 +4,6 @@ import java.util
 
 import hex.tree.gbm.GBMModel
 import org.apache.spark.SparkContext
-import org.apache.spark.examples.h2o.CraigslistJobTitlesApp
 import org.apache.spark.h2o.H2OContext
 import org.apache.spark.ml.feature.Word2VecModel
 import org.apache.spark.mllib.feature

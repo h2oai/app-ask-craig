@@ -17,7 +17,6 @@
 
 package water.apps
 
-import org.apache.spark.examples.h2o.CraigslistJobTitlesApp
 import org.apache.spark.h2o.H2OContext
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
