@@ -5,7 +5,7 @@ set -x
 pushd workflow
   mongoexport \
     --verbose \
-    --host=$DB_SERVER_IP_PORT
+    --host=$DB_SERVER_IP_PORT \
     --db=app-ask-craig \
     --collection=jobs \
     --type=csv \
