@@ -8,7 +8,7 @@ module.exports = (db, workflow) ->
 
   echo = (message, go) -> go null, message
 
-  predictJobCategory = (jobTitle, go) -> 
+  predictJobCategory = (jobTitle, go) ->
     console.log 'Predicting job category ...'
     workflow.predict jobTitle, (error, prediction) ->
       if error
@@ -47,9 +47,6 @@ module.exports = (db, workflow) ->
           else
             console.log "Listed #{list.length}"
             go null, list
-
-    # This is long-running, so return immediately.
-    go null
 
   { ping, echo, createJob, listJobs, predictJobCategory }
 
