@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 touch \
-  web/out.log \
-  web/error.log \
-  workflow/out.log \
-  workflow/error.log
+  web/stdout.log \
+  web/stderr.log \
+  workflow/stdout.log \
+  workflow/stderr.log
 
 tail --retry \
-  -f web/out.log \
-  -f web/error.log \
-  -f workflow/out.log \
-  -f workflow/error.log
+  -f web/stdout.log \
+  -f web/stderr.log \
+  -f workflow/stdout.log \
+  -f workflow/stderr.log
 
