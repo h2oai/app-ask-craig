@@ -10,7 +10,7 @@
     "sync-client": "browser-sync start --proxy localhost:$APP_PORT --files app.js",
     "watch-server": "supervisor --exec coffee --watch server.coffee,service.coffee server.coffee",
     "thrift": "thrift -gen js:node ../workflow/src/main/thrift/askcraig.thrift && thrift -gen js -gen js:node web.thrift",
-    "postinstall": "npm run build && npm run thrift && bower install",
+    "postinstall": "npm run build && npm run thrift && bower install --config.interactive=false",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
