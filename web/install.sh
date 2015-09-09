@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -ex
 
+npm install
+
 # Prime database
 mongoimport \
   --verbose \
@@ -9,14 +11,5 @@ mongoimport \
   --collection=jobs \
   --type=csv \
   --headerline \
-  --file=./workflow/data/craigslistJobTitles.csv
-
-pushd workflow
-  ./install.sh
-popd
-
-pushd web
-  ./install.sh
-popd
-
+  --file=../workflow/data/craigslistJobTitles.csv
 

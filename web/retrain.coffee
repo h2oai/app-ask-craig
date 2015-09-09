@@ -1,13 +1,13 @@
 Thrift = require 'thrift'
 ML = require './gen-nodejs/AskCraig'
 
-{ ML_SERVER_IP_PORT } = process.env
+{ ML_HOST } = process.env
 
-unless ML_SERVER_IP_PORT then throw new Error 'ML_SERVER_IP_PORT not specified.'
+unless ML_HOST then throw new Error 'ML_HOST not specified.'
 
-[ ip, port ] = ML_SERVER_IP_PORT.split ':'
+[ ip, port ] = ML_HOST.split ':'
 
-console.log "Connecting to ML server #{ML_SERVER_IP_PORT} ..."
+console.log "Connecting to ML server #{ML_HOST} ..."
 connection = Thrift.createConnection ip, port,
   transport : Thrift.TBufferedTransport()
   protocol : Thrift.TBinaryProtocol()

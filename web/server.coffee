@@ -5,13 +5,13 @@ appServer = require './gen-nodejs/Web.js'
 MongoClient = require('mongodb').MongoClient
 Service = require './service.coffee'
 
-{ ML_SERVER_IP_PORT, DB_SERVER_IP_PORT, APP_SERVER_PORT } = process.env
+{ ML_HOST, DB_HOST, APP_PORT } = process.env
 
-unless ML_SERVER_IP_PORT then throw new Error 'ML_SERVER_IP_PORT not specified.'
+unless ML_HOST then throw new Error 'ML_HOST not specified.'
 
-unless DB_SERVER_IP_PORT then throw new Error 'DB_SERVER_IP_PORT not specified.'
+unless DB_HOST then throw new Error 'DB_HOST not specified.'
 
-unless APP_SERVER_PORT then throw new Error 'APP_SERVER_PORT not specified.'
+unless APP_PORT then throw new Error 'APP_PORT not specified.'
 
 _isConnectedToWorkflow = no
 connectToWorkflow = (ip, port, go) ->
@@ -34,7 +34,7 @@ connectToWorkflow = (ip, port, go) ->
   client = Thrift.createClient workflowServer, connection
 
 connectToDatabase = (go) ->
-  databaseHost = "mongodb://#{DB_SERVER_IP_PORT}/app-ask-craig"
+  databaseHost = "mongodb://#{DB_HOST}/app-ask-craig"
   process.stdout.write "Connecting to #{databaseHost} ..."
   MongoClient.connect databaseHost, (error, db) ->
     if error
@@ -54,7 +54,7 @@ startServer = (db, workflow) ->
         processor: appServer
         handler: Service db, workflow.client
 
-  server.listen port = parseInt APP_SERVER_PORT, 10
+  server.listen port = parseInt APP_PORT, 10
 
   process.on 'SIGTERM', ->
     console.log 'Shutting down.'
@@ -65,7 +65,7 @@ startServer = (db, workflow) ->
   process.stdout.write " started on port #{port}.\n"
 
 main = ->
-  [ ip, port ] = ML_SERVER_IP_PORT.split ':'
+  [ ip, port ] = ML_HOST.split ':'
   process.stdout.write "Connecting to workflow server #{ip}:#{port} ..."
 
   connectToWorkflow ip, port, (error, workflow) ->

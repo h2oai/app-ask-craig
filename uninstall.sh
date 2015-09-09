@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -e
-set -x
+set -ex
 
-# Drop database
-mongo app-ask-craig --eval "db.dropDatabase()"
+pushd web
+  ./uninstall.sh
+popd

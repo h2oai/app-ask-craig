@@ -26,6 +26,9 @@ window.server = server = new App.WebClient new Thrift.TJSONProtocol new Thrift.T
 # Set the application title
 app.title 'Ask Craig'
 
+# Hide the footer
+hide app.footer
+
 # This is a function that creates the UI for a list of jobs.
 createJobListing = (jobs) ->
 
@@ -83,8 +86,8 @@ createJobView = ->
   self = card
     title: 'Add a new job posting'
     items: [
-      jobTitleField
-      jobCategoryField
+      block jobTitleField
+      block jobCategoryField
     ]
     buttons: [
       # The post button creates a job and saves the economy ftw.

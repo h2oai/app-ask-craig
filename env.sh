@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export ML_SERVER_IP_PORT=localhost:9090
-export DB_SERVER_IP_PORT=localhost:27017
-export APP_SERVER_PORT=9091
+export DB_HOST=localhost:27017
+export ML_HOST=localhost:9090
+export APP_PORT=9091
 

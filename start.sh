@@ -1,30 +1,11 @@
 #!/usr/bin/env bash
-set -e
-set -x
-
-# TODO pass port
+set -ex
 
 pushd workflow
-  ./gradlew run > out.log 2> error.log &
-  PID=$!
-  if ps -p $PID > /dev/null ; then
-    echo $PID > server.pid
-  else
-    echo "Could not start workflow server"
-    exit 1
-  fi
+  ./start.sh
 popd
 
 pushd web
-  ./node_modules/.bin/coffee server.coffee > out.log 2> error.log &
-  PID=$!
-  if ps -p $PID > /dev/null ; then
-    echo $PID > server.pid
-  else
-    echo "Could not start app server"
-    exit 1
-  fi
+  ./start.sh
 popd
-
-exit 0
 
