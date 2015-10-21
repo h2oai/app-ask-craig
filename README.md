@@ -17,7 +17,7 @@ http://h2o.ai/blog/2015/07/ask-craig-sparkling-water-2/
 1. git clone git@github.com:h2oai/app-ask-craig.git
 1. cd app-ask-craig
 1. mkdir -p data/db
-1. mongod --dbpath `pwd`/data/db
+1. mongod --dbpath \`pwd\`/data/db
 
 ### Window 2
 
