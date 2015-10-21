@@ -6,7 +6,7 @@ touch \
   workflow/stdout.log \
   workflow/stderr.log
 
-tail --retry \
+tail \
   -f web/stdout.log \
   -f web/stderr.log \
   -f workflow/stdout.log \
